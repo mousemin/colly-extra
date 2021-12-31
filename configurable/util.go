@@ -1,6 +1,10 @@
 package configurable
 
-import "github.com/PuerkitoBio/goquery"
+import (
+	"os"
+
+	"github.com/PuerkitoBio/goquery"
+)
 
 // analyzeDocumentByElements 根据 Element 解析 goquery.Document
 func analyzeDocumentByElements(
@@ -40,4 +44,23 @@ func analyzeDocumentByElements(
 		}
 	}
 	return result
+}
+
+// isFile returns true if given path exists as a file (i.e. not a directory).
+func isFile(path string) bool {
+	f, e := os.Stat(path)
+	if e != nil {
+		return false
+	}
+	return !f.IsDir()
+}
+
+// isDir returns true if given path is a directory, and returns false when it's
+// a file or does not exist.
+func isDir(dir string) bool {
+	f, e := os.Stat(dir)
+	if e != nil {
+		return false
+	}
+	return f.IsDir()
 }

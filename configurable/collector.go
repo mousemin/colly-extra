@@ -120,7 +120,7 @@ func (c *Collector) onResponse(response *colly.Response) {
 	stepName := response.Ctx.Get(CollyConfStepName)
 	extInfo, _ := response.Ctx.GetAny(CollyConfExt).(map[string]interface{})
 	if stepName == CollyConfStepEnd {
-		results := conf.GetResult()
+		results := conf.GetFinal()
 		if len(results) == 0 {
 			c.logger.Warnf("获取结果解析配置无效, %s", urlStr)
 		}

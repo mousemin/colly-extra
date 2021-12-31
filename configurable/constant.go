@@ -9,5 +9,5 @@ const (
 	CollyConfStepName  = "__conf.step.name" // 步骤名称
 	CollyConfExt       = "__conf.ext"       // 额外信息
 	CollyConfStepStart = "start"            // 开始步骤名称
-	CollyConfStepEnd   = "end"              // 结束步骤名称
+	CollyConfStepEnd   = "final"            // 结束步骤名称
 )

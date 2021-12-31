@@ -17,7 +17,7 @@ type (
 		GetProxy() string               // 获取代理信息
 		GetName() string                // 获取配置名称
 		GetStep(name string) []Step     // 获取一个抓取步骤
-		GetResult() map[string]Element  // 获取结果
+		GetFinal() map[string]Element   // 获取结果
 	}
 
 	Step struct {
