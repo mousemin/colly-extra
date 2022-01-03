@@ -37,8 +37,8 @@ func WithLogger(l Logger) Option {
 	}
 }
 
-func WithPipeline(pipeLine func(interface{}) error) Option {
+func WithPipeline(pipeLineFunc PipelineFunc) Option {
 	return func(c *Collector) {
-		c.pipeline = pipeLine
+		c.pipelineFunc = pipeLineFunc
 	}
 }

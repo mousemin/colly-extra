@@ -16,16 +16,20 @@ var (
 	ErrNotStorage = errors.New("not found configurable storage")
 )
 
-type Collector struct {
-	mu        *sync.Mutex               // 保证Init唯一
-	name      string                    // 爬虫名称
-	only      bool                      // 是否只运行配置爬虫
-	storage   Storage                   // 配置资源
-	queue     *queue.Queue              // colly.Queue
-	collector *colly.Collector          // colly.Collector
-	logger    Logger                    // 日志组件
-	pipeline  func(v interface{}) error // 结果pipeline
-}
+type (
+	Collector struct {
+		mu           *sync.Mutex      // 保证Init唯一
+		name         string           // 爬虫名称
+		only         bool             // 是否只运行配置爬虫
+		storage      Storage          // 配置资源
+		queue        *queue.Queue     // colly.Queue
+		collector    *colly.Collector // colly.Collector
+		logger       Logger           // 日志组件
+		pipelineFunc PipelineFunc     // 结果pipeline
+	}
+
+	PipelineFunc func(name string, v interface{}) error
+)
 
 func New(name string, opts ...Option) (*Collector, error) {
 	c := &Collector{
@@ -69,9 +73,9 @@ func (c *Collector) Init() (err error) {
 		c.logger = createLogger()
 	}
 
-	if c.pipeline == nil {
-		c.pipeline = func(v interface{}) error {
-			c.logger.Debugf("result pipeline send: %v", v)
+	if c.pipelineFunc == nil {
+		c.pipelineFunc = func(name string, v interface{}) error {
+			c.logger.Debugf("[result] name: %s send: %v", name, v)
 			return nil
 		}
 	}
@@ -125,7 +129,7 @@ func (c *Collector) onResponse(response *colly.Response) {
 			c.logger.Warnf("获取结果解析配置无效, %s", urlStr)
 		}
 		pipeline := analyzeDocumentByElements(doc, results, extInfo)
-		if err := c.pipeline(pipeline); err != nil {
+		if err := c.pipelineFunc(confName, pipeline); err != nil {
 			c.logger.Warnf("结果pipeline, err: %s", err.Error())
 		}
 		return
