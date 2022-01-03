@@ -4,24 +4,18 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
-type NSQStorage struct {
-	Topic    string
-	Channel  string
-	producer *nsq.Producer
-	consumer *nsq.Consumer
-	bodyChan chan []byte
-}
-
-type NSQQueueConfig struct {
-	Topic        string
-	Channel      string
-	ProducerAddr string
-	ConsumerAddr string
-}
-
-type consumerChan struct {
-	bytesChan chan []byte
-}
+type (
+	NSQStorage struct {
+		Topic    string
+		Channel  string
+		producer *nsq.Producer
+		consumer *nsq.Consumer
+		bodyChan chan []byte
+	}
+	consumerChan struct {
+		bytesChan chan []byte
+	}
+)
 
 func (c *consumerChan) HandleMessage(msg *nsq.Message) error {
 	c.bytesChan <- msg.Body
