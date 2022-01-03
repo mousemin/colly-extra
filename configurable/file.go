@@ -65,7 +65,11 @@ func (f *FileConfig) GetProxy() string {
 func (f *FileConfig) GetBaseRequest() *colly.Request {
 	ctx := colly.NewContext()
 	ctx.Put(CollyConfName, f.GetName())
-	ctx.Put(CollyConfStepName, CollyConfStepStart)
+	if len(f.GetStep(CollyConfStepStart)) == 0 {
+		ctx.Put(CollyConfStepName, CollyConfStepEnd)
+	} else {
+		ctx.Put(CollyConfStepName, CollyConfStepStart)
+	}
 	u, _ := url.Parse(f.GetBaseURL())
 	return &colly.Request{
 		URL:      u,
