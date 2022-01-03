@@ -9,7 +9,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
-	"github.com/gocolly/colly/v2/queue"
+	"github.com/mousemin/colly-extra/queue"
 )
 
 var (
@@ -22,7 +22,7 @@ type (
 		name         string           // 爬虫名称
 		only         bool             // 是否只运行配置爬虫
 		storage      Storage          // 配置资源
-		queue        *queue.Queue     // colly.Queue
+		queue        queue.Interface  // colly.Queue
 		collector    *colly.Collector // colly.Collector
 		logger       Logger           // 日志组件
 		pipelineFunc PipelineFunc     // 结果pipeline

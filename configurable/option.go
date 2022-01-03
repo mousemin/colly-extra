@@ -2,7 +2,7 @@ package configurable
 
 import (
 	"github.com/gocolly/colly/v2"
-	"github.com/gocolly/colly/v2/queue"
+	"github.com/mousemin/colly-extra/queue"
 )
 
 type Option func(c *Collector)
@@ -25,7 +25,7 @@ func WithCollector(collector *colly.Collector) Option {
 	}
 }
 
-func WithQueue(q *queue.Queue) Option {
+func WithQueue(q queue.Interface) Option {
 	return func(c *Collector) {
 		c.queue = q
 	}
