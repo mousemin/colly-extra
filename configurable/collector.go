@@ -67,7 +67,7 @@ func (c *Collector) Init() (err error) {
 		}
 	}
 	if c.collector == nil {
-		c.collector = colly.NewCollector()
+		c.collector = colly.NewCollector(colly.DetectCharset())
 	}
 	if c.logger == nil {
 		c.logger = createLogger()
