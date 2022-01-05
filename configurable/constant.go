@@ -10,4 +10,8 @@ const (
 	CollyConfExt       = "__conf.ext"       // 额外信息
 	CollyConfStepStart = "start"            // 开始步骤名称
 	CollyConfStepEnd   = "final"            // 结束步骤名称
+
+	// pipeline中数据保留字段
+
+	CollyPipelineURL = "_url" // 结果 - 请求的url
 )

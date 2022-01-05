@@ -1,6 +1,7 @@
 package configurable
 
 import (
+	"embed"
 	"encoding/json"
 	"io/fs"
 	"io/ioutil"
@@ -13,7 +14,8 @@ import (
 
 type (
 	DirStorage struct {
-		path string
+		path   string
+		pathFs *embed.FS
 	}
 	FileConfig struct {
 		Name           string             `json:"name"`
@@ -25,21 +27,36 @@ type (
 	}
 )
 
-func NewDirStorage(path string) (*DirStorage, error) {
-	if !isDir(path) {
+func NewDirStorage(path string, fs2 *embed.FS) (*DirStorage, error) {
+	if !isDir(path) && fs2 == nil {
 		return nil, fs.ErrNotExist
 	}
 	return &DirStorage{
-		path: path,
+		path:   path,
+		pathFs: fs2,
 	}, nil
 }
 
-func (d *DirStorage) GetConfig(name string) (IConfig, error) {
+func (d *DirStorage) getConfigByPath(name string) ([]byte, error) {
 	filename := filepath.Join(d.path, name+".json")
 	if !isFile(filename) {
 		return nil, fs.ErrNotExist
 	}
-	bytes, err := ioutil.ReadFile(filename)
+	return ioutil.ReadFile(filename)
+}
+
+func (d *DirStorage) getConfigByEmbed(name string) ([]byte, error) {
+	return d.pathFs.ReadFile(name + ".json")
+}
+
+func (d *DirStorage) GetConfig(name string) (IConfig, error) {
+	var bytes []byte
+	var err error
+	if d.pathFs == nil {
+		bytes, err = d.getConfigByPath(name)
+	} else {
+		bytes, err = d.getConfigByEmbed(name)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +79,7 @@ func (f *FileConfig) GetProxy() string {
 	return f.Proxy
 }
 
-func (f *FileConfig) GetBaseRequest() *colly.Request {
+func (f *FileConfig) GetBaseRequest(urls ...string) *colly.Request {
 	ctx := colly.NewContext()
 	ctx.Put(CollyConfName, f.GetName())
 	if len(f.GetStep(CollyConfStepStart)) == 0 {
@@ -70,7 +87,11 @@ func (f *FileConfig) GetBaseRequest() *colly.Request {
 	} else {
 		ctx.Put(CollyConfStepName, CollyConfStepStart)
 	}
-	u, _ := url.Parse(f.GetBaseURL())
+	urlStr := f.GetBaseURL()
+	if len(urls) > 0 {
+		urlStr = urls[0]
+	}
+	u, _ := url.Parse(urlStr)
 	return &colly.Request{
 		URL:      u,
 		Method:   http.MethodGet,

@@ -12,12 +12,12 @@ type (
 	}
 
 	IConfig interface {
-		GetBaseURL() string             // 获取开始URI
-		GetBaseRequest() *colly.Request // 获取开始的request
-		GetProxy() string               // 获取代理信息
-		GetName() string                // 获取配置名称
-		GetStep(name string) []Step     // 获取一个抓取步骤
-		GetFinal() map[string]Element   // 获取结果
+		GetBaseURL() string                      // 获取开始URI
+		GetBaseRequest(...string) *colly.Request // 获取开始的request
+		GetProxy() string                        // 获取代理信息
+		GetName() string                         // 获取配置名称
+		GetStep(name string) []Step              // 获取一个抓取步骤
+		GetFinal() map[string]Element            // 获取结果 保留字段_*
 	}
 
 	Step struct {

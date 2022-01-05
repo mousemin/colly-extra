@@ -129,6 +129,7 @@ func (c *Collector) onResponse(response *colly.Response) {
 			c.logger.Warnf("获取结果解析配置无效, %s", urlStr)
 		}
 		pipeline := analyzeDocumentByElements(doc, results, extInfo)
+		pipeline[CollyPipelineURL] = urlStr
 		if err := c.pipelineFunc(confName, pipeline); err != nil {
 			c.logger.Warnf("结果pipeline, err: %s", err.Error())
 		}
